@@ -4,21 +4,23 @@ import List from "../../components/list/List";
 import "./profilePage.scss";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 function ProfilePage() {
+  const { updateUser, currentUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     setLoading(true);
     try {
-      const res = await axios.post(
+      await axios.post(
         "http://localhost:5000/api/V1/auth/logout",
         {},
         { withCredentials: true }
       );
-      localStorage.removeItem("user");
+      updateUser(null);
       toast.success("Logout successful");
       navigate("/login");
     } catch (error) {
@@ -28,6 +30,7 @@ function ProfilePage() {
       setLoading(false);
     }
   };
+
   return (
     <div className="profilePage">
       <div className="details">
@@ -39,16 +42,13 @@ function ProfilePage() {
           <div className="info">
             <span>
               Avatar:
-              <img
-                src="https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                alt=""
-              />
+              <img src={currentUser.avatar || "/noAvatar.jpg"} alt="avatar" />
             </span>
             <span>
-              Username: <b>John Doe</b>
+              Username: <b>{currentUser.username}</b>
             </span>
             <span>
-              E-mail: <b>john@gmail.com</b>
+              E-mail: <b>{currentUser.email}</b>
             </span>
             <button
               onClick={handleLogout}
