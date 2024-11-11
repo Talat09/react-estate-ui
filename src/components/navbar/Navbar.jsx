@@ -12,7 +12,9 @@ function Navbar() {
       <div className="left">
         <a href="/" className="logo">
           <img src="/logo.png" alt="" />
-          <span>LamaEstate</span>
+          <span style={{ fontweight: "bold", marginLeft: "-10px" }}>
+            - Properties
+          </span>
         </a>
         <a href="/">Home</a>
         <a href="/">About</a>
@@ -26,7 +28,9 @@ function Navbar() {
               src={currentUser.avatar || "/noAvatar.jpg"}
               alt={currentUser.username}
             />
-            <span>{currentUser.username}</span>
+            <span style={{ textTransform: "uppercase" }}>
+              {currentUser.username}
+            </span>
             <Link to="/profile" className="profile">
               <div className="notification">3</div>
               <span>Profile</span>

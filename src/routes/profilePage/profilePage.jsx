@@ -2,7 +2,7 @@ import axios from "axios";
 import Chat from "../../components/chat/Chat";
 import List from "../../components/list/List";
 import "./profilePage.scss";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
@@ -37,7 +37,10 @@ function ProfilePage() {
         <div className="wrapper">
           <div className="title">
             <h1>User Information</h1>
-            <button>Update Profile</button>
+            <Link to="/profile/update">
+              {" "}
+              <button>Update Profile</button>
+            </Link>
           </div>
           <div className="info">
             <span>
