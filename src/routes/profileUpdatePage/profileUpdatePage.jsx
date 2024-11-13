@@ -1,13 +1,44 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import "./profileUpdatePage.scss";
 import { AuthContext } from "../../context/AuthContext";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function ProfileUpdatePage() {
+  const [error, setError] = useState("");
   const { currentUser, updateUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+    const username = e.target.username.value;
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    // console.log(username, email, password);
+    // updateUser(username, email, password);
+    try {
+      const id = currentUser.id;
+
+      const response = await axios.put(
+        `http://localhost:5000/api/V1/users/${id}`,
+        { username, email, password },
+        { withCredentials: true }
+      );
+      // console.log("login response:", response.data);
+      updateUser(response.data);
+      if (response.status === 200) {
+        toast.success("Registration successful!");
+        navigate("/profile");
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+      toast.error("An error occurred: " + error.response.data.message);
+    }
+  };
   return (
     <div className="profileUpdatePage">
       <div className="formContainer">
-        <form>
+        <form onSubmit={handleUpdateUser}>
           <h1>Update Profile</h1>
           <div className="item">
             <label htmlFor="username">Username</label>
@@ -32,6 +63,7 @@ function ProfileUpdatePage() {
             <input id="password" name="password" type="password" />
           </div>
           <button>Update</button>
+          {error && <p style={{ color: "red" }}>{error}</p>}
         </form>
       </div>
       <div className="sideContainer">
