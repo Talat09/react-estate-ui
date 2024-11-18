@@ -21,7 +21,7 @@ function Login() {
         { username, password },
         { withCredentials: true }
       );
-      console.log("login response:", response.data);
+      // console.log("login response:", response.data);
       updateUser(response.data);
       if (response.status === 200) {
         toast.success("Registration successful!");

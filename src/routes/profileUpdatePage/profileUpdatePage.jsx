@@ -4,10 +4,14 @@ import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import UploadWidget from "../../components/uploadWidget/UploadWidget";
 
 function ProfileUpdatePage() {
   const [error, setError] = useState("");
+
   const { currentUser, updateUser } = useContext(AuthContext);
+
+  const [avatar, setAvatar] = useState(currentUser.avatar);
   const navigate = useNavigate();
   const handleUpdateUser = async (e) => {
     e.preventDefault();
@@ -21,7 +25,7 @@ function ProfileUpdatePage() {
 
       const response = await axios.put(
         `http://localhost:5000/api/V1/users/${id}`,
-        { username, email, password },
+        { username, email, password, avatar },
         { withCredentials: true }
       );
       // console.log("login response:", response.data);
@@ -67,10 +71,16 @@ function ProfileUpdatePage() {
         </form>
       </div>
       <div className="sideContainer">
-        <img
-          src={currentUser.avatar || "/noAvatar.jpg"}
-          alt=""
-          className="avatar"
+        <img src={avatar || "/noAvatar.jpg"} alt="avatar" className="avatar" />
+        <UploadWidget
+          uwConfig={{
+            cloudName: "talatdev",
+            uploadPreset: "estate",
+            multiple: false,
+            maxImageFileSize: 2000000,
+            folder: "avatars",
+          }}
+          setAvatar={setAvatar}
         />
       </div>
     </div>
