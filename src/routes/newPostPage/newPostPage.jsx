@@ -1,16 +1,109 @@
+import { useState } from "react";
 import "./newPostPage.scss";
-
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import axios from "axios";
+import UploadWidget from "../../components/uploadWidget/UploadWidget";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 function NewPostPage() {
+  const [value, setValue] = useState("");
+  const [error, setError] = useState("");
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+
+    // Gather input values from the form
+    const title = form.title.value.trim();
+    const price = form.price.value.trim();
+    const address = form.address.value.trim();
+    const desc = value; // ReactQuill content
+    const city = form.city.value.trim();
+    const bedroom = form.bedroom.value.trim();
+    const bathroom = form.bathroom.value.trim();
+    const latitude = form.latitude.value.trim();
+    const longitude = form.longitude.value.trim();
+    const type = form.type.value;
+    const property = form.property.value;
+    const utilities = form.utilities.value;
+    const petPolicy = form.pet.value;
+    const incomePolicy = form.income.value.trim();
+    const size = form.size.value.trim();
+    const schoolDistance = form.school.value.trim();
+    const busDistance = form.bus.value.trim();
+    const restaurantDistance = form.restaurant.value.trim();
+
+    // Validate required fields (you can expand validation as needed)
+    if (!title || !price || !address || !desc) {
+      alert("Please fill in all required fields!");
+      return;
+    }
+
+    // Prepare data for submission
+    const postData = {
+      title,
+      price: parseFloat(price),
+      address,
+
+      city,
+      bedroom: parseInt(bedroom, 10),
+      bathroom: parseInt(bathroom, 10),
+      latitude: JSON.stringify(latitude),
+      longitude: JSON.stringify(longitude),
+      type,
+      property,
+      images,
+    };
+    const postDetails = {
+      desc,
+      utilities,
+      petPolicy,
+      incomePolicy,
+      size: parseFloat(size),
+      distances: {
+        school: parseFloat(schoolDistance),
+        bus: parseFloat(busDistance),
+        restaurant: parseFloat(restaurantDistance),
+      },
+    };
+
+    console.log("Form Data:", { postData, postDetails });
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        "http://localhost:5000/api/V1/posts",
+        {
+          postData,
+          postDetails,
+        },
+        { withCredentials: true }
+      );
+
+      toast.success("Post added successfully!");
+      setLoading(false);
+      navigate("/" + response.data.id);
+    } catch (error) {
+      setLoading(false);
+      setError("Error submitting data. Please try again later.");
+
+      toast.error("Submission failed.");
+    }
+  };
+
   return (
     <div className="newPostPage">
       <div className="formContainer">
         <h1>Add New Post</h1>
         <div className="wrapper">
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="item">
               <label htmlFor="title">Title</label>
               <input id="title" name="title" type="text" />
             </div>
+
             <div className="item">
               <label htmlFor="price">Price</label>
               <input id="price" name="price" type="number" />
@@ -21,6 +114,7 @@ function NewPostPage() {
             </div>
             <div className="item description">
               <label htmlFor="desc">Description</label>
+              <ReactQuill theme="snow" onChange={setValue} value={value} />
             </div>
             <div className="item">
               <label htmlFor="city">City</label>
@@ -100,11 +194,28 @@ function NewPostPage() {
               <label htmlFor="restaurant">Restaurant</label>
               <input min={0} id="restaurant" name="restaurant" type="number" />
             </div>
-            <button className="sendButton">Add</button>
+            <button className="sendButton" disabled={loading}>
+              {loading ? "Loading..." : "Add"}
+            </button>
+            {error && <span style={{ color: "red" }}>{error}</span>}
           </form>
         </div>
       </div>
-      <div className="sideContainer"></div>
+      <div className="sideContainer">
+        {images.map((image, index) => (
+          <img key={index} src={image} alt={image} />
+        ))}
+        <UploadWidget
+          uwConfig={{
+            cloudName: "talatdev",
+            uploadPreset: "estate",
+            multiple: true,
+            maxImageFileSize: 2000000,
+            folder: "posts",
+          }}
+          setState={setImages}
+        />
+      </div>
     </div>
   );
 }
