@@ -1,4 +1,5 @@
 import axios from "axios";
+import { defer } from "react-router-dom";
 
 export const singlePageLoader = async ({ request, params }) => {
   const res = await axios.get(
@@ -8,8 +9,10 @@ export const singlePageLoader = async ({ request, params }) => {
 };
 export const listPageLoader = async ({ request, params }) => {
   const query = request.url.split("?")[1];
-  console.log("request: ", request);
-  const res = await axios.get(`http://localhost:5000/api/V1/posts?${query}`);
-  console.log("res: ", res);
-  return res.data;
+
+  const postPromise = axios.get(`http://localhost:5000/api/V1/posts?${query}`);
+
+  return defer({
+    postResponse: postPromise,
+  });
 };
