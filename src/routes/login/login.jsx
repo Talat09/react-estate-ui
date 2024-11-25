@@ -21,14 +21,13 @@ function Login() {
         { username, password },
         { withCredentials: true }
       );
-      // console.log("login response:", response.data);
+
       updateUser(response.data);
       if (response.status === 200) {
         toast.success("Registration successful!");
         navigate("/");
       }
     } catch (error) {
-      // console.error("New Error:", error.response.data.message);
       setError(error.response.data.message);
       toast.error("An error occurred: " + error.response.data.message);
     }

@@ -7,10 +7,12 @@ export const singlePageLoader = async ({ request, params }) => {
   );
   return res.data;
 };
-export const listPageLoader = async ({ request, params }) => {
+export const listPageLoader = async ({ request }) => {
   const query = request.url.split("?")[1];
 
-  const postPromise = axios.get(`http://localhost:5000/api/V1/posts?${query}`);
+  const postPromise = await axios.get(
+    `http://localhost:5000/api/V1/posts?${query}`
+  );
 
   return defer({
     postResponse: postPromise,
