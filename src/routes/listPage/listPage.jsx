@@ -27,11 +27,11 @@ function ListPage() {
             }
           >
             <Await
-              resolve={data.postResponse}
+              resolve={data?.postResponse}
               errorElement={<p>Error loading posts!</p>}
             >
               {(postResponse) =>
-                postResponse.data.map((item) => (
+                postResponse?.data?.map((item) => (
                   <Card key={item.id} item={item} />
                 ))
               }
