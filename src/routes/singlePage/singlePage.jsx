@@ -8,11 +8,11 @@ import { useContext, useState } from "react";
 import axios from "axios";
 function SinglePage() {
   const post = useLoaderData();
-  console.log("singlePageData", post);
+  console.log("singlePageData", post.isSaved);
   const [saved, setSaved] = useState(post.isSaved);
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
-
+  console.log(currentUser);
   const handleSave = async () => {
     if (!currentUser) {
       navigate("/login");
@@ -20,9 +20,13 @@ function SinglePage() {
     // AFTER REACT 19 UPDATE TO USEOPTIMISTIK HOOK
     setSaved((prev) => !prev);
     try {
-      await axios.post("http://localhost:5000/api/V1/users/save", {
-        postId: post.id,
-      });
+      await axios.post(
+        "http://localhost:5000/api/V1/users/save",
+        {
+          postId: post.id,
+        },
+        { withCredentials: true }
+      );
     } catch (err) {
       console.log(err);
       setSaved((prev) => !prev);
