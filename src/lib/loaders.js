@@ -29,8 +29,12 @@ export const profilePageLoader = async () => {
       withCredentials: true,
     }
   );
+  const chatPromise = axios.get(`http://localhost:5000/api/V1/chats`, {
+    withCredentials: true,
+  });
 
   return defer({
     postResponse: postPromise,
+    chatResponse: chatPromise,
   });
 };

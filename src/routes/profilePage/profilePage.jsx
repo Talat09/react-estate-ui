@@ -126,6 +126,26 @@ function ProfilePage() {
       </div>
       <div className="chatContainer">
         <div className="wrapper">
+          <Suspense
+            fallback={
+              <img
+                style={{
+                  width: "200px",
+                  display: "flex",
+                  margin: "auto",
+                }}
+                src="/loading.gif"
+                alt="loading"
+              />
+            }
+          >
+            <Await
+              resolve={data?.chatResponse}
+              errorElement={<p>Error loading chats!</p>}
+            >
+              {(chatResponse) => <Chat chats={chatResponse.data} />}
+            </Await>
+          </Suspense>
           <Chat />
         </div>
       </div>
