@@ -1,13 +1,25 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import "./chat.scss";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import { format } from "timeago.js";
+import { SocketContext } from "../../context/SocketContext";
+import { useNotificationStore } from "../../lib/notificationStore";
 
 function Chat({ chats }) {
   const [chat, setChat] = useState(null);
   const { currentUser } = useContext(AuthContext);
-  console.log("chat from chat page: ", chats);
+  const { socket } = useContext(SocketContext);
+  // console.log("chat from chat page: ", chats);
+
+  const messageEndRef = useRef();
+
+  const decrease = useNotificationStore((state) => state.decrease);
+
+  // useEffect(() => {
+  //   messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // }, [chat]);
+
   const handleOpenChat = async (id, receiver) => {
     try {
       const res = await axios.get(
@@ -15,7 +27,9 @@ function Chat({ chats }) {
 
         { withCredentials: true }
       );
-
+      if (!res.data.seenBy.includes(currentUser.id)) {
+        decrease();
+      }
       setChat({ ...res.data, receiver });
     } catch (err) {
       console.log(err);
@@ -37,10 +51,38 @@ function Chat({ chats }) {
       );
       setChat((prev) => ({ ...prev, messages: [...prev.messages, res.data] }));
       e.target.reset();
+      socket.emit("sendMessage", {
+        receiverId: chat.receiver.id,
+        data: res.data,
+      });
     } catch (err) {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    const read = async () => {
+      try {
+        await axios.put("http://localhost:5000/api/V1/chats/read/" + chat.id, {
+          withCredentials: true,
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    if (chat && socket) {
+      socket.on("getMessage", (data) => {
+        if (chat.id === data.chatId) {
+          setChat((prev) => ({ ...prev, messages: [...prev.messages, data] }));
+          read();
+        }
+      });
+    }
+    return () => {
+      socket.off("getMessage");
+    };
+  }, [socket, chat]);
   return (
     <div className="chat">
       <div className="messages">
@@ -57,7 +99,7 @@ function Chat({ chats }) {
             }}
             onClick={() => handleOpenChat(c.id, c.receiver)}
           >
-            <img src={c.receiver.avatar || "/noAvatar.jpg"} alt="user avatar" />
+            <img src={c.receiver.avatar || "/noAvatar.jpg"} alt="" />
             <span>{c.receiver.username}</span>
             <p>{c.lastMessage}</p>
           </div>
@@ -67,10 +109,7 @@ function Chat({ chats }) {
         <div className="chatBox">
           <div className="top">
             <div className="user">
-              <img
-                src={chat.receiver.avatar || "/noAvatar.jpg"}
-                alt="user avatar"
-              />
+              <img src={chat.receiver.avatar || "/noAvatar.jpg"} alt="" />
               {chat.receiver.username}
             </div>
             <span className="close" onClick={() => setChat(null)}>
@@ -91,20 +130,11 @@ function Chat({ chats }) {
                 }}
                 key={message.id}
               >
-                <p
-                  style={{
-                    backgroundColor: "#B3C8CF",
-                    padding: "15px",
-                    borderRadius: "10px",
-                    color: "white",
-                  }}
-                >
-                  {message.text}
-                </p>
-                <br />
+                <p>{message.text}</p>
                 <span>{format(message.createdAt)}</span>
               </div>
             ))}
+            {/* <div ref={messageEndRef}></div> */}
           </div>
           <form onSubmit={handleSubmit} className="bottom">
             <textarea name="text"></textarea>
