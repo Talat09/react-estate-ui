@@ -24,7 +24,7 @@ function ProfileUpdatePage() {
       const id = currentUser.id;
 
       const response = await axios.put(
-        `http://localhost:5000/api/V1/users/${id}`,
+        `https://real-estate-backend-livid.vercel.app/api/V1/users/${id}`,
         { username, email, password, avatar: avatar[0] },
         { withCredentials: true }
       );

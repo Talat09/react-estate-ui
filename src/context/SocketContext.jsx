@@ -9,7 +9,7 @@ export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:5000", {
+    const newSocket = io("https://real-estate-backend-livid.vercel.app", {
       transports: ["websocket"], // Optional: Ensure WebSocket transport is used
       withCredentials: true,
     });

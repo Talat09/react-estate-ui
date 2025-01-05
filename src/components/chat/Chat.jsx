@@ -23,7 +23,7 @@ function Chat({ chats }) {
   const handleOpenChat = async (id, receiver) => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/V1/chats/" + id,
+        "https://real-estate-backend-livid.vercel.app/api/V1/chats/" + id,
 
         { withCredentials: true }
       );
@@ -45,7 +45,8 @@ function Chat({ chats }) {
     if (!text) return;
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/V1/messages/" + chat.id,
+        "https://real-estate-backend-livid.vercel.app/api/V1/messages/" +
+          chat.id,
         { text },
         { withCredentials: true }
       );
@@ -63,9 +64,13 @@ function Chat({ chats }) {
   useEffect(() => {
     const read = async () => {
       try {
-        await axios.put("http://localhost:5000/api/V1/chats/read/" + chat.id, {
-          withCredentials: true,
-        });
+        await axios.put(
+          "https://real-estate-backend-livid.vercel.app/api/V1/chats/read/" +
+            chat.id,
+          {
+            withCredentials: true,
+          }
+        );
       } catch (err) {
         console.log(err);
       }

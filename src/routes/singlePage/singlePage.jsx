@@ -21,7 +21,7 @@ function SinglePage() {
     setSaved((prev) => !prev);
     try {
       await axios.post(
-        "http://localhost:5000/api/V1/users/save",
+        "https://real-estate-backend-livid.vercel.app/api/V1/users/save",
         {
           postId: post.id,
         },

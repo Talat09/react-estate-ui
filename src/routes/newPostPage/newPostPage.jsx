@@ -74,7 +74,7 @@ function NewPostPage() {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:5000/api/V1/posts",
+        "https://real-estate-backend-livid.vercel.app/api/V1/posts",
         {
           postData,
           postDetails,

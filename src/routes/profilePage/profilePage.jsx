@@ -17,7 +17,7 @@ function ProfilePage() {
     setLoading(true);
     try {
       await axios.post(
-        "http://localhost:5000/api/V1/auth/logout",
+        "https://real-estate-backend-livid.vercel.app/api/V1/auth/logout",
         {},
         { withCredentials: true }
       );

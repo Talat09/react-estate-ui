@@ -4,7 +4,10 @@ import { create } from "zustand";
 export const useNotificationStore = create((set) => ({
   number: 0,
   fetch: async () => {
-    const res = axios.get("http://localhost:5000/api/V1/users/notification", { withCredentials: true });
+    const res = axios.get(
+      "https://real-estate-backend-livid.vercel.app/api/V1/users/notification",
+      { withCredentials: true }
+    );
     set({ number: res.data });
   },
   decrease: () => {

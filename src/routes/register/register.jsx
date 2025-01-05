@@ -22,7 +22,7 @@ function Register() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/V1/auth/register",
+        "https://real-estate-backend-livid.vercel.app/api/V1/auth/register",
         {
           method: "POST",
           headers: {
@@ -62,7 +62,7 @@ function Register() {
               style={{ position: "absolute", right: "10px", top: "35%" }}
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ?<AiOutlineEye />  :<AiOutlineEyeInvisible />}
+              {showPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
             </span>
             <input
               style={{ width: "100%" }}
